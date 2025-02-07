@@ -57,12 +57,12 @@ function sendHttpRequest(method, url, data) {
     return fetch(url, {
       method: method,
     //   Using FormData
-      body: data,
+    //   body: data,
     //   Using Json data
-    //   body: JSON.stringify(data),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
       .then(response => {
         if (response.status >= 200 && response.status < 300) {
@@ -82,11 +82,13 @@ function sendHttpRequest(method, url, data) {
   
   async function fetchPosts() {
     try {
-      const responseData = await sendHttpRequest(
-        'GET',
-        'https://jsonplaceholder.typicode.com/posts'
-      );
-      const listOfPosts = responseData;
+      const responseData = await axios.get('https://jsonplaceholder.typicode.com/posts');
+    //   await sendHttpRequest(
+    //     'GET',
+    //     'https://jsonplaceholder.typicode.com/posts'
+    //   );
+    console.log(responseData)
+      const listOfPosts = responseData.data;
       for (const post of listOfPosts) {
         const postEl = document.importNode(postTemplate.content, true);
         postEl.querySelector('h2').textContent = post.title.toUpperCase();
@@ -113,7 +115,9 @@ async function createPost(title, content) {
   fd.append('body', content);
   fd.append('userId', userId);
 
-  sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', fd);
+  const response = axios.post('https://jsonplaceholder.typicode.com/posts',fd)
+  console.log(response)
+//   sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', fd);
 }
 
 fetchButton.addEventListener('click', fetchPosts);
@@ -129,6 +133,8 @@ postList.addEventListener('click', event => {
     if(event.target.tagName === 'BUTTON'){
         const postId = event.target.closest('li').id;
         console.log(postId)
-        sendHttpRequest('DELETE',`https://jsonplaceholder.typicode.com/posts/${postId}`)
+       const response = axios.delete(`https://jsonplaceholder.typicode.com/posts/${postId}`);
+        // sendHttpRequest('DELETE',`https://jsonplaceholder.typicode.com/posts/${postId}`)
+        console.log(response)
     }
 })
